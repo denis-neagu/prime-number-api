@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -62,7 +63,7 @@ public interface PrimeNumberOperation {
     )
     @GetMapping(path = "/primes", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     ResponseEntity<?> getPrimeNumbers(
-            @RequestParam(name = "limit") long limit,
+            @RequestParam(name = "limit") @Size(min = 2) long limit,
             @RequestParam(name = "algorithm", defaultValue = "NAIVE_TRIAL_DIVISION") String algorithm,
             @RequestParam(name = "cache", defaultValue = "false") boolean cache);
 }
