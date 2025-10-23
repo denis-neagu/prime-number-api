@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class PrimeNumberController implements PrimeNumberOperation {
 
     @Override
-    public ResponseEntity<?> getPrimeNumbers() {
+    public ResponseEntity<?> getPrimeNumbers(long limit,
+                                             String algorithm,
+                                             boolean cache) {
         log.info("Prime numbers finished calculating");
         return null;
     }

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Validated
 @RequestMapping("/api/v1")
@@ -60,5 +61,8 @@ public interface PrimeNumberOperation {
             }
     )
     @GetMapping(path = "/primes", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    ResponseEntity<?> getPrimeNumbers();
+    ResponseEntity<?> getPrimeNumbers(
+            @RequestParam(name = "limit") long limit,
+            @RequestParam(name = "algorithm", defaultValue = "NAIVE_TRIAL_DIVISION") String algorithm,
+            @RequestParam(name = "cache", defaultValue = "false") boolean cache);
 }
