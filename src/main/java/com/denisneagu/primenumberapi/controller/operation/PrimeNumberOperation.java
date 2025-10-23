@@ -1,6 +1,9 @@
 package com.denisneagu.primenumberapi.controller.operation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,6 +36,27 @@ public interface PrimeNumberOperation {
                             }),
                     @ApiResponse(responseCode = "400", description = "Bad request"),
                     @ApiResponse(responseCode = "500", description = "Server error")
+            }
+    )
+    @Parameters(
+            value = {
+                    @Parameter(
+                            name = "limit",
+                            description = "Inclusive upper limit",
+                            required = true,
+                            in = ParameterIn.QUERY),
+                    @Parameter(
+                            name = "algorithm",
+                            description = "Algorithm to calculate prime numbers",
+                            required = false,
+                            in = ParameterIn.QUERY
+                    ),
+                    @Parameter(
+                            name = "cache",
+                            description = "Flag whether to use cache or not",
+                            required = false,
+                            in = ParameterIn.QUERY
+                    )
             }
     )
     @GetMapping(path = "/primes", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
