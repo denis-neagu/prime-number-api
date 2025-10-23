@@ -1,4 +1,19 @@
 package com.denisneagu.primenumberapi.controller;
 
-public class PrimeNumberController {
+import com.denisneagu.primenumberapi.controller.operation.PrimeNumberOperation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@Slf4j
+public class PrimeNumberController implements PrimeNumberOperation {
+
+    @Override
+    public ResponseEntity<?> getPrimeNumbers() {
+        log.info("Prime numbers finished calculating");
+        return null;
+    }
 }
