@@ -12,4 +12,11 @@ public record PrimeNumberResponse(
         LocalDateTime timestamp,
         long[] primes
         ) {
+    public PrimeNumberResponse(Algorithm algorithm,
+                               boolean cache,
+                               long execTimeInNs,
+                               long execTimeInMs,
+                               long[] primes) {
+        this(algorithm, cache, execTimeInNs, execTimeInMs, LocalDateTime.now(), primes);
+    }
 }
