@@ -1,5 +1,6 @@
 package com.denisneagu.primenumberapi.controller.operation;
 
+import com.denisneagu.primenumberapi.dto.PrimeNumberResponse;
 import com.denisneagu.primenumberapi.enums.Algorithm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -63,7 +64,7 @@ public interface PrimeNumberOperation {
             }
     )
     @GetMapping(path = "/primes", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    ResponseEntity<?> getPrimeNumbers(
+    ResponseEntity<PrimeNumberResponse> getPrimeNumbers(
             @RequestParam(name = "limit") @Size(min = 2) long limit,
             @RequestParam(name = "algorithm", defaultValue = "NAIVE_TRIAL_DIVISION") Algorithm algorithm,
             @RequestParam(name = "cache", defaultValue = "false") boolean cache);
