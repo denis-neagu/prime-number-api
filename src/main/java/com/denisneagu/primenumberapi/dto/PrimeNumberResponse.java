@@ -14,6 +14,7 @@ public record PrimeNumberResponse(
         long execTimeInNs,
         long execTimeInMs,
         LocalDateTime timestamp,
+        int numOfPrimes,
         @JacksonXmlElementWrapper(localName = "primes")
         @JacksonXmlProperty(localName = "prime")
         long[] primes
@@ -22,7 +23,8 @@ public record PrimeNumberResponse(
                                boolean cache,
                                long execTimeInNs,
                                long execTimeInMs,
+                               int numOfPrimes,
                                long[] primes) {
-        this(algorithm, cache, execTimeInNs, execTimeInMs, LocalDateTime.now(), primes);
+        this(algorithm, cache, execTimeInNs, execTimeInMs, LocalDateTime.now(), numOfPrimes, primes);
     }
 }

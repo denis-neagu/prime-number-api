@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PrimeNumberServiceImpl implements PrimeNumberService {
     private final AlgorithmService algorithmService;
+    private final long[] EMPTY_PRIMES_ARRAY = new long[0];
 
     private long[] getPrimeNumbersAtAlgorithm(long startAt, long limit, Algorithm algorithm) {
         if (algorithm == null) {
@@ -32,7 +33,7 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
     }
 
     @Override
-    public PrimeNumberResponse getPrimeNumbers(long limit, Algorithm algorithm, boolean cache) {
+    public PrimeNumberResponse getPrimeNumbers(long limit, boolean showPrimes, Algorithm algorithm, boolean cache) {
             PrimeNumberExecutionResponse<long[]> executionResponse = PrimeNumberExecution
                     .getPrimeNumberWithExecutionTime(() -> {
                         return getPrimeNumbersAtAlgorithm(2, limit, algorithm);
@@ -43,6 +44,9 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
                     false,
                     executionResponse.execDurationTimeInNs(),
                     executionResponse.execDurationTimeInMs(),
-                    executionResponse.response());
+                    executionResponse.response().length,
+                    showPrimes
+                            ? executionResponse.response()
+                            : EMPTY_PRIMES_ARRAY);
     }
 }

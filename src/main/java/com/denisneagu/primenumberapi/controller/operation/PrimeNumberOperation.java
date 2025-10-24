@@ -50,6 +50,12 @@ public interface PrimeNumberOperation {
                             required = true,
                             in = ParameterIn.QUERY),
                     @Parameter(
+                            name = "showPrimes",
+                            description = "Show or hide all prime numbers up to and including limit",
+                            required = false,
+                            in = ParameterIn.QUERY
+                    ),
+                    @Parameter(
                             name = "algorithm",
                             description = "Algorithm to calculate prime numbers",
                             required = false,
@@ -66,6 +72,7 @@ public interface PrimeNumberOperation {
     @GetMapping(path = "/primes", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     ResponseEntity<PrimeNumberResponse> getPrimeNumbers(
             @RequestParam(name = "limit") @Min(2) long limit,
+            @RequestParam(name = "showPrimes", defaultValue = "false") boolean showPrimes,
             @RequestParam(name = "algorithm", defaultValue = "NAIVE_TRIAL_DIVISION") Algorithm algorithm,
             @RequestParam(name = "cache", defaultValue = "false") boolean cache);
 }
