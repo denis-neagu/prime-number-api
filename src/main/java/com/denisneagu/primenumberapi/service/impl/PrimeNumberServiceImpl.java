@@ -4,6 +4,7 @@ import com.denisneagu.primenumberapi.dto.PrimeNumberExecutionResponse;
 import com.denisneagu.primenumberapi.dto.PrimeNumberResponse;
 import com.denisneagu.primenumberapi.enums.Algorithm;
 import com.denisneagu.primenumberapi.exception.UnknownAlgorithmException;
+import com.denisneagu.primenumberapi.service.AlgorithmService;
 import com.denisneagu.primenumberapi.service.PrimeNumberService;
 import com.denisneagu.primenumberapi.util.Constant;
 import com.denisneagu.primenumberapi.util.PrimeNumberExecution;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PrimeNumberServiceImpl implements PrimeNumberService {
+    private final AlgorithmService algorithmService;
 
     private long[] getPrimeNumbersAtAlgorithm(long startAt, long limit, Algorithm algorithm) {
         if (algorithm == null) {
@@ -23,6 +25,7 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
 
         switch (algorithm) {
             case NAIVE_TRIAL_DIVISION:
+                return algorithmService.getPrimeNumbersUsingNaiveTrialDivision(startAt, limit);
             default:
                 throw new UnknownAlgorithmException(Constant.UNKNOWN_ALGORITHM);
         }
