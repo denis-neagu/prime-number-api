@@ -17,9 +17,10 @@ public class PrimeNumberController implements PrimeNumberOperation {
 
     @Override
     public ResponseEntity<PrimeNumberResponse> getPrimeNumbers(long limit,
+                                                               boolean showPrimes,
                                                                Algorithm algorithm,
                                                                boolean cache) {
-        PrimeNumberResponse primeNumberResponse = primeNumberService.getPrimeNumbers(limit, algorithm, cache);
+        PrimeNumberResponse primeNumberResponse = primeNumberService.getPrimeNumbers(limit, showPrimes, algorithm, cache);
         log.info("Finished calculating primes with limit: {}", limit);
         return ResponseEntity.ok(primeNumberResponse);
     }
