@@ -33,6 +33,8 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
         switch (algorithm) {
             case NAIVE_TRIAL_DIVISION:
                 return algorithmService.getPrimeNumbersUsingNaiveTrialDivision(startAt, limit);
+            case NAIVE_TRIAL_DIVISION_OPTIMISED:
+                return algorithmService.getPrimeNumbersUsingNaiveTrialDivisionOptimised(startAt, limit);
             default:
                 throw new UnknownAlgorithmException(Constant.UNKNOWN_ALGORITHM);
         }

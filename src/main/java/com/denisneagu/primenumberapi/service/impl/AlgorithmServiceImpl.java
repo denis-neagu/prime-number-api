@@ -55,4 +55,46 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 
         return Arrays.copyOf(primeNumbers, index);
     }
+
+    private boolean isPrimeOptimized(long num) {
+        if (num <= 1) {
+            return false;
+        }
+        if (num == 2) {
+            return true;
+        }
+        // skip even numbers
+        if (num % 2 == 0) {
+            return false;
+        }
+
+        // only check odd divisors to cut the number of checks roughly in half
+        for (long i = 3; i * i <= num; i = i + 2) {
+            if (num % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // skip even numbers and only check odd numbers if they're prime
+    @Override
+    public long[] getPrimeNumbersUsingNaiveTrialDivisionOptimised(long startAt, long limit) {
+        // ensure startAt is at least 2
+        startAt = Math.max(startAt, 2);
+
+        int estimatedSize = getArrSizeUsingPrimeNumberTheorem(limit);
+
+        long[] primeNumbers = new long[estimatedSize];
+
+        int index = 0;
+
+        for (long i = startAt; i <= limit; i++) {
+            if (isPrimeOptimized(i)) {
+                primeNumbers[index++] = i;
+            }
+        }
+
+        return Arrays.copyOf(primeNumbers, index);
+    }
 }
