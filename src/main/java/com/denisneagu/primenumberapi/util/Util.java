@@ -6,6 +6,7 @@ public class Util {
     private static final int MAX_SAFE_MEMORY_PERCENTAGE = 40;
 
     public static String formatSizeInMbAndMiB(long sizeInBytes) {
+        // mebibyte
         double sizeInMiB = sizeInBytes / (1024.0 * 1024.0);
         double sizeInMB = sizeInBytes / 1_000_000.0;
         return String.format("%.4f MB and %.4f MiB (true value)", sizeInMB, sizeInMiB);
