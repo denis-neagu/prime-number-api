@@ -10,6 +10,9 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -17,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PrimeNumberControllerIntegrationTest {
@@ -40,14 +44,25 @@ public class PrimeNumberControllerIntegrationTest {
             127L, 131L, 137L, 139L, 149L
     };
 
-    @Test
-    void givenValidRequestParametersWithCache_whenGetPrimeNumbers_thenReturnCachedPrimeNumbers() {
+    private static Stream<Arguments> getPrimeNumbersTestcases() {
+        return Stream.of(
+                Arguments.of(Algorithm.NAIVE_TRIAL_DIVISION),
+                Arguments.of(Algorithm.NAIVE_TRIAL_DIVISION_OPTIMISED),
+                Arguments.of(Algorithm.SIEVE_OF_ERATOSTHENES),
+                Arguments.of(Algorithm.CONCURRENT_SEGMENTED_SIEVE),
+                Arguments.of(Algorithm.SEGMENTED_SIEVE_BITSET)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getPrimeNumbersTestcases")
+    void givenValidRequestParametersWithCache_whenGetPrimeNumbers_thenReturnCachedPrimeNumbers(Algorithm algorithm) {
         PrimeNumberResponse primeNumberFirstResponse = RestAssured
                 .given()
                 .queryParam("cache", true)
                 .queryParam("showPrimes", true)
                 .queryParam("limit", 150)
-                .queryParam("algorithm", "SIEVE_OF_ERATOSTHENES")
+                .queryParam("algorithm", algorithm)
                 .when()
                 .get("/api/v1/primes")
                 .then()
@@ -57,14 +72,14 @@ public class PrimeNumberControllerIntegrationTest {
 
         Assertions.assertArrayEquals(PRIME_NUMBERS_UP_TO_150, primeNumberFirstResponse.primes());
         Assertions.assertFalse(primeNumberFirstResponse.cache());
-        Assertions.assertEquals(Algorithm.SIEVE_OF_ERATOSTHENES, primeNumberFirstResponse.algorithm());
+        Assertions.assertEquals(algorithm, primeNumberFirstResponse.algorithm());
 
         PrimeNumberResponse primeNumberSecondResponse = RestAssured
                 .given()
                 .queryParam("cache", true)
                 .queryParam("showPrimes", true)
                 .queryParam("limit", 150)
-                .queryParam("algorithm", "SIEVE_OF_ERATOSTHENES")
+                .queryParam("algorithm", algorithm)
                 .when()
                 .get("/api/v1/primes")
                 .then()
@@ -74,7 +89,7 @@ public class PrimeNumberControllerIntegrationTest {
 
         Assertions.assertArrayEquals(PRIME_NUMBERS_UP_TO_150, primeNumberSecondResponse.primes());
         Assertions.assertTrue(primeNumberSecondResponse.cache());
-        Assertions.assertEquals(Algorithm.SIEVE_OF_ERATOSTHENES, primeNumberSecondResponse.algorithm());
+        Assertions.assertEquals(algorithm, primeNumberSecondResponse.algorithm());
 
         Mockito.verify(cacheService, Mockito.times(2)).getCachedPrimeNumbers(Mockito.anyLong());
         Mockito.verify(cacheService, Mockito.times(1))
