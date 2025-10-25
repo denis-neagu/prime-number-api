@@ -153,4 +153,28 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 
         return result;
     }
+
+    private boolean[] sieve(long limit) {
+        if (limit >= Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Limit is too large for an Integer array capacity");
+        }
+
+        boolean[] isPrime = new boolean[(int) (limit + 1)];
+
+        Arrays.fill(isPrime, true);
+
+        isPrime[0] = false;
+        isPrime[1] = false;
+
+        for (int p = 2; (long) p * p <= limit; p++) {
+            if (isPrime[p]) {
+                // set multiples of p to false indicating a non-prime number
+                for (int j = p * p; j <= limit; j += p) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+
+        return isPrime;
+    }
 }
