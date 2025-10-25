@@ -121,4 +121,36 @@ public class GlobalExceptionHandlerTest {
         );
         Assertions.assertNotNull(response.errorThrownAt());
     }
+
+    @Test
+    void givenMemoryConstraintException_whenHandleMemoryConstraintException_thenReturnInsufficientStorage() {
+        MemoryConstraintException ex = new MemoryConstraintException("Memory limit exceeded");
+
+        ErrorResponse response = globalExceptionHandler.handleMemoryConstraintException(ex);
+
+        Assertions.assertEquals(507, response.httpStatus());
+        Assertions.assertEquals("Memory limit exceeded", response.description());
+        Assertions.assertNotNull(response.errorThrownAt());
+    }
+
+    @Test
+    void givenMethodArgumentTypeMismatchExceptionWithNullRequiredType_whenHandleMethodArgumentTypeMismatchException_thenReturnBadRequestWithUnknownType() {
+        MethodParameter parameter = Mockito.mock(MethodParameter.class);
+        MethodArgumentTypeMismatchException ex = new MethodArgumentTypeMismatchException(
+                "abc",
+                null,
+                "limit",
+                parameter,
+                null
+        );
+
+        ErrorResponse response = globalExceptionHandler.handleMethodArgumentTypeMismatchException(ex);
+
+        Assertions.assertEquals(400, response.httpStatus());
+        Assertions.assertEquals(
+                "Invalid value 'abc' for parameter 'limit'. Expected type: unknown.",
+                response.description()
+        );
+        Assertions.assertNotNull(response.errorThrownAt());
+    }
 }
