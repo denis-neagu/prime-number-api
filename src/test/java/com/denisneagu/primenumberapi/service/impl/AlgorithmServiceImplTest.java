@@ -99,4 +99,53 @@ public class AlgorithmServiceImplTest {
             executorService.shutdown();
         }
     }
+
+    @Nested
+    class GetPrimeNumbersUsingSegmentedSieveBitset {
+
+        @Test
+        void givenValidRangeFromSevenToTwenty_whenGetPrimeNumbersUsingSegmentedSieveBitset_thenReturnPrimeNumbers() {
+            long[] primes = service.getPrimeNumbersUsingSegmentedSieveBitset(2L, 20L);
+            Assertions.assertArrayEquals(
+                    new long[]{2L, 3L, 5L, 7L, 11L, 13L, 17L, 19L},
+                    primes
+            );
+        }
+
+        @Test
+        void givenValidRangeFromSevenToEight_whenGetPrimeNumbersUsingSegmentedSieveBitset_thenReturnSinglePrime() {
+            long[] primes = service.getPrimeNumbersUsingSegmentedSieveBitset(7L, 8L);
+            Assertions.assertArrayEquals(
+                    new long[]{7L},
+                    primes
+            );
+        }
+
+        @Test
+        void givenValidRangeFromNineToTen_whenGetPrimeNumbersUsingSegmentedSieveBitset_thenReturnEmptyArray() {
+            long[] primes = service.getPrimeNumbersUsingSegmentedSieveBitset(9L, 10L);
+            Assertions.assertArrayEquals(
+                    new long[]{},
+                    primes
+            );
+        }
+
+        @Test
+        void givenRangeStartingBelowTwo_whenGetPrimeNumbersUsingSegmentedSieveBitset_thenStartAtTwo() {
+            long[] primes = service.getPrimeNumbersUsingSegmentedSieveBitset(0L, 10L);
+            Assertions.assertArrayEquals(
+                    new long[]{2L, 3L, 5L, 7L},
+                    primes
+            );
+        }
+
+        @Test
+        void givenLargeRangeWithNoPrimes_whenGetPrimeNumbersUsingSegmentedSieveBitset_thenReturnEmptyArray() {
+            long[] primes = service.getPrimeNumbersUsingSegmentedSieveBitset(14L, 15L);
+            Assertions.assertArrayEquals(
+                    new long[]{},
+                    primes
+            );
+        }
+    }
 }
