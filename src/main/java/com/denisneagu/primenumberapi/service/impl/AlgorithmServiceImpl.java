@@ -97,4 +97,60 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 
         return Arrays.copyOf(primeNumbers, index);
     }
+
+    @Override
+    public long[] getPrimeNumbersUsingSieveOfEratosthenes(long startAt, long limit) {
+        if (startAt >= Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("startAt is larger than Integer max value in Sieve of Eratosthenes");
+        }
+
+        // ensure startAt is at least 2
+        int start = (int) Math.max(startAt, 2);
+
+        // this should never overflow, we should have caught it earlier on the input size validations
+        int n = (int) limit;
+        boolean[] isPrime = new boolean[n + 1];
+
+        // assume all numbers are prime until proven otherwise
+        for (int i = 0; i < n; i++) {
+            isPrime[i] = true;
+        }
+
+        // aggregate only through possible composite numbers, composite number must have at least one factor <= n
+        for (int p = 2; p * p < n; p++) {
+            // if previously already marked as false because it's a multiple of p, we don't need to check
+            if (isPrime[p]) {
+                // mark all multiples of p as composite, starting from p^2
+                // because smaller multiples have already been marked by smaller primes to avoid marking the same prime twice
+                for (int i = p * p; i < n; i = i + p) {
+                    isPrime[i] = false;
+                }
+            }
+        }
+
+        // count primes
+        int count = 0;
+
+        // we don't need to start at 0 through the array. if merge happened then those numbers are already calculated.
+        for (int i = start; i < n; i++) {
+            if (isPrime[i]) {
+                count++;
+            }
+        }
+
+        // store primes in result array
+        long[] result = new long[count];
+
+        int index = 0;
+
+        // add prime numbers
+        for (int i = start; i < n; i++) {
+            if (isPrime[i]) {
+                result[index] = i;
+                index++;
+            }
+        }
+
+        return result;
+    }
 }

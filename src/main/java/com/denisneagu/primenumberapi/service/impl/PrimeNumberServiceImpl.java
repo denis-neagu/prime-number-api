@@ -35,6 +35,8 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
                 return algorithmService.getPrimeNumbersUsingNaiveTrialDivision(startAt, limit);
             case NAIVE_TRIAL_DIVISION_OPTIMISED:
                 return algorithmService.getPrimeNumbersUsingNaiveTrialDivisionOptimised(startAt, limit);
+            case SIEVE_OF_ERATOSTHENES:
+                return algorithmService.getPrimeNumbersUsingSieveOfEratosthenes(startAt, limit);
             default:
                 throw new UnknownAlgorithmException(Constant.UNKNOWN_ALGORITHM);
         }
