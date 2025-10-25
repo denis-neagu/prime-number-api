@@ -8,6 +8,7 @@ import com.denisneagu.primenumberapi.service.AlgorithmService;
 import com.denisneagu.primenumberapi.service.CacheService;
 import com.denisneagu.primenumberapi.service.PrimeNumberService;
 import com.denisneagu.primenumberapi.util.Constant;
+import com.denisneagu.primenumberapi.util.ExecutorServiceProvider;
 import com.denisneagu.primenumberapi.util.PrimeNumberExecution;
 import com.denisneagu.primenumberapi.util.Util;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PrimeNumberServiceImpl implements PrimeNumberService {
     private final CacheService cacheService;
     private final AlgorithmService algorithmService;
+    private final ExecutorServiceProvider executorServiceProvider;
     private final long[] EMPTY_PRIMES_ARRAY = new long[0];
 
     private long[] getPrimeNumbersAtAlgorithm(long startAt, long limit, Algorithm algorithm) {
@@ -37,6 +39,11 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
                 return algorithmService.getPrimeNumbersUsingNaiveTrialDivisionOptimised(startAt, limit);
             case SIEVE_OF_ERATOSTHENES:
                 return algorithmService.getPrimeNumbersUsingSieveOfEratosthenes(startAt, limit);
+            case CONCURRENT_SEGMENTED_SIEVE:
+                return algorithmService.getPrimeNumbersUsingConcurrentSegmentedSieve(
+                        executorServiceProvider.getExecutorService(),
+                        startAt,
+                        limit);
             default:
                 throw new UnknownAlgorithmException(Constant.UNKNOWN_ALGORITHM);
         }
