@@ -67,6 +67,7 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
 
     @Override
     public PrimeNumberResponse getPrimeNumbers(long limit, boolean showPrimes, Algorithm algorithm, boolean cache) {
+        checkInputSize(limit, algorithm);
         if (cache) {
             return getPrimeNumbersWithCache(limit, showPrimes, algorithm);
         } else {
