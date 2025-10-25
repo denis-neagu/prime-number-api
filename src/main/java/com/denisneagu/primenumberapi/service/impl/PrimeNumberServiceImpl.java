@@ -44,6 +44,8 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
                         executorServiceProvider.getExecutorService(),
                         startAt,
                         limit);
+            case SEGMENTED_SIEVE_BITSET:
+                return algorithmService.getPrimeNumbersUsingSegmentedSieveBitset(startAt, limit);
             default:
                 throw new UnknownAlgorithmException(Constant.UNKNOWN_ALGORITHM);
         }

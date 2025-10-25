@@ -12,4 +12,6 @@ public interface AlgorithmService {
     long[] getPrimeNumbersUsingConcurrentSegmentedSieve(ExecutorService executorService,
                                                         long startAt,
                                                         long limit);
+
+    long[] getPrimeNumbersUsingSegmentedSieveBitset(long startAt, long limit);
 }
