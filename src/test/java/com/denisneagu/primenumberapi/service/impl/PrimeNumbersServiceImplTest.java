@@ -2,6 +2,7 @@ package com.denisneagu.primenumberapi.service.impl;
 
 import com.denisneagu.primenumberapi.dto.PrimeNumberResponse;
 import com.denisneagu.primenumberapi.enums.Algorithm;
+import com.denisneagu.primenumberapi.exception.IllegalLimitStateToAlgorithmException;
 import com.denisneagu.primenumberapi.exception.UnknownAlgorithmException;
 import com.denisneagu.primenumberapi.util.ExecutorServiceProvider;
 import org.junit.jupiter.api.Assertions;
@@ -160,4 +161,26 @@ public class PrimeNumbersServiceImplTest {
                 UnknownAlgorithmException.class,
                 () -> {primeNumberService.getPrimeNumbers(2L, true, null, false);});
     }
+
+    @Test
+    void givenExceedingLimitWithSieveAlgorithm_whenGetPrimeNumbers_thenThrowIllegalLimitStateToAlgorithmException() {
+        PrimeNumberServiceImpl primeNumberService = new PrimeNumberServiceImpl(
+                cacheServiceImpl,
+                algorithmServiceImpl,
+                executorServiceProvider
+        );
+
+        long exceedingLimit = Integer.MAX_VALUE;
+
+        Assertions.assertThrows(
+                IllegalLimitStateToAlgorithmException.class,
+                () -> primeNumberService.getPrimeNumbers(
+                        exceedingLimit,
+                        false,
+                        Algorithm.SIEVE_OF_ERATOSTHENES,
+                        false
+                )
+        );
+    }
+
 }

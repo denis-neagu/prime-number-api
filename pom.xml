@@ -111,8 +111,8 @@
 						</goals>
 						<configuration>
 							<excludes>
-								<exclude>com/primenumberapi/PrimeNumberApiApplication.class</exclude>
-								<excludee>com/primenumberapi/util/Constant.class</excludee>
+								<exclude>com/denisneagu/primenumberapi/PrimeNumberApiApplication.class</exclude>
+								<exclude>com/denisneagu/primenumberapi/util/Constant.class</exclude>
 							</excludes>
 						</configuration>
 					</execution>
