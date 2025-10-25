@@ -190,7 +190,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
         // ensure min start is 2
         startAt = Math.max(startAt, 2);
         // set segment size
-        int segmentSize = 500_000_000;
+        int segmentSize = 100_000_000;
 
         // find small primes up to sqrt(limit) using a regular sieve
         int sqrtLimit = (int) Math.sqrt(limit);
