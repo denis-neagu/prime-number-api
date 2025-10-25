@@ -3,6 +3,7 @@ package com.denisneagu.primenumberapi.service.impl;
 import com.denisneagu.primenumberapi.dto.PrimeNumberExecutionResponse;
 import com.denisneagu.primenumberapi.dto.PrimeNumberResponse;
 import com.denisneagu.primenumberapi.enums.Algorithm;
+import com.denisneagu.primenumberapi.exception.IllegalLimitStateToAlgorithmException;
 import com.denisneagu.primenumberapi.exception.UnknownAlgorithmException;
 import com.denisneagu.primenumberapi.service.AlgorithmService;
 import com.denisneagu.primenumberapi.service.CacheService;
@@ -54,6 +55,14 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
     private PrimeNumberExecutionResponse<long[]> computePrimeNumbers(long startAt, long limit, Algorithm algorithm) {
         return PrimeNumberExecution.getPrimeNumberWithExecutionTime(
                 () -> getPrimeNumbersAtAlgorithm(startAt, limit, algorithm));
+    }
+
+    // we only want to allow sieve of eratosthenes usage up to Integer max limit - 1
+    private void checkInputSize(long limit, Algorithm algorithm) {
+        if ((algorithm == Algorithm.SIEVE_OF_ERATOSTHENES) && (limit >= Integer.MAX_VALUE)) {
+            throw new IllegalLimitStateToAlgorithmException(String.format(
+                    Constant.ILLEGAL_LIMIT_STATE_TO_ALGORITHM_MESSAGE, algorithm));
+        }
     }
 
     @Override
