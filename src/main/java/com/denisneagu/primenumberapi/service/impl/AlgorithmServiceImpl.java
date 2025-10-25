@@ -4,7 +4,12 @@ import com.denisneagu.primenumberapi.service.AlgorithmService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 @Service
 @Slf4j
@@ -152,5 +157,213 @@ public class AlgorithmServiceImpl implements AlgorithmService {
         }
 
         return result;
+    }
+
+    private boolean[] sieve(long limit) {
+        if (limit >= Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Limit is too large for an Integer array capacity");
+        }
+
+        boolean[] isPrime = new boolean[(int) (limit + 1)];
+
+        Arrays.fill(isPrime, true);
+
+        isPrime[0] = false;
+        isPrime[1] = false;
+
+        for (int p = 2; (long) p * p <= limit; p++) {
+            if (isPrime[p]) {
+                // set multiples of p to false indicating a non-prime number
+                for (int j = p * p; j <= limit; j += p) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+
+        return isPrime;
+    }
+
+    @Override
+    public long[] getPrimeNumbersUsingConcurrentSegmentedSieve(ExecutorService executorService,
+                                                               long startAt,
+                                                               long limit) {
+        // ensure min start is 2
+        startAt = Math.max(startAt, 2);
+        // set segment size
+        int segmentSize = 500_000_000;
+
+        // find small primes up to sqrt(limit) using a regular sieve
+        int sqrtLimit = (int) Math.sqrt(limit);
+        boolean[] isSmallPrime = sieve(sqrtLimit);
+
+        // collect small prime numbers up to sqrt(limit) to be used to mark non-prime numbers in the segments
+        int smallPrimeCount = 0;
+        for (boolean b : isSmallPrime) {
+            if (b) {
+                smallPrimeCount++;
+            }
+        }
+        int[] smallPrimes = new int[smallPrimeCount];
+        int index = 0;
+        for (int i = 2; i <= sqrtLimit; i++) {
+            if (isSmallPrime[i]) {
+                smallPrimes[index++] = i;
+            }
+        }
+
+        // estimate total number of primes using prime number theorem
+        int estimatedSize = getArrSizeUsingPrimeNumberTheorem(limit);
+        long[] allPrimes = new long[estimatedSize];
+        int count = 0;
+
+        // add small primes >= startAt to result
+        for (int p : smallPrimes) {
+            if (p >= startAt) {
+                allPrimes[count++] = p;
+            }
+        }
+
+        // prepare concurrent segment tasks
+        List<CompletableFuture<long[]>> futures = new ArrayList<>();
+
+        // process segments from max(startAt, sqrt(limit + 1)
+        // small primes <= sqrt(limit) already handled, so skip
+        long segmentStart = Math.max(startAt, (long) sqrtLimit + 1);
+
+        // divide range [segmentStart, limit] into segments
+        while (segmentStart <= limit) {
+            // capture segmentStart value as segStart because segmentStart will chance in the loop, but we need a final value in the futures; race conditions
+            long segStart = segmentStart;
+            // define the end of the current segment
+            long segEnd = Math.min(segStart + segmentSize - 1, limit);
+
+            // create CompletableFuture to process segments using multithreading and asynchronously using the ExecutorService's thread pools
+            CompletableFuture<long[]> future = CompletableFuture.supplyAsync(() -> {
+                // create array for the current segment
+                boolean[] segment = new boolean[(int) (segEnd - segStart + 1)];
+                // fill each index in the array with true assuming each number is primitive
+                Arrays.fill(segment, true);
+
+                // loop through small primes to use to mark non-prime numbers
+                for (int p : smallPrimes) {
+                    // find first multiple of p in the segment
+                    long startMultiple = Math.max((long) p * p, ((segStart + p - 1) / p) * p);
+                    // mark all multiples of p in the segment as non-prime numbers
+                    for (long j = startMultiple; j <= segEnd; j += p) {
+                        segment[(int) (j - segStart)] = false;
+                    }
+                }
+                // count prime numbers for a segment
+                int segCount = 0;
+                for (boolean b : segment) {
+                    if (b) {
+                        segCount++;
+                    }
+                }
+                // collect prime numbers from a segment
+                long[] primesInSegment = new long[segCount];
+                int k = 0;
+                for (int i = 0; i < segment.length; i++) {
+                    if (segment[i]) {
+                        primesInSegment[k++] = segStart + i;
+                    }
+                }
+                // return the array of primes from the existing segment
+                return primesInSegment;
+            }, executorService);
+            // add task to list of futures
+            futures.add(future);
+            // loop to next segment
+            segmentStart += segmentSize;
+        }
+
+        // merge all prime numbers
+        for (CompletableFuture<long[]> future : futures) {
+            long[] segmentPrimes = future.join();
+            // copy segment primes into all primes where the output of one segment's length is the start input of another
+            System.arraycopy(segmentPrimes, 0, allPrimes, count, segmentPrimes.length);
+            count += segmentPrimes.length;
+        }
+
+        return Arrays.copyOf(allPrimes, count);
+    }
+
+    @Override
+    public long[] getPrimeNumbersUsingSegmentedSieveBitset(long startAt, long limit) {
+        // ensure min start is 2
+        startAt = Math.max(startAt, 2);
+        // set segment size
+        int segmentSize = 500_000_000;
+
+        // find small primes up to sqrt(limit) using a regular sieve
+        int sqrtLimit = (int) Math.sqrt(limit);
+        boolean[] isSmallPrime = sieve(sqrtLimit);
+
+        // collect small prime numbers up to sqrt(limit) to be used to mark non-prime numbers in the segments
+        int smallPrimeCount = 0;
+        for (boolean b : isSmallPrime) {
+            if (b) {
+                smallPrimeCount++;
+            }
+        }
+        int[] smallPrimes = new int[smallPrimeCount];
+        int index = 0;
+        for (int i = 2; i <= sqrtLimit; i++) {
+            if (isSmallPrime[i]) {
+                smallPrimes[index++] = i;
+            }
+        }
+
+        // estimate total number of primes using prime number theorem
+        int estimatedSize = getArrSizeUsingPrimeNumberTheorem(limit);
+        long[] allPrimes = new long[estimatedSize];
+        int count = 0;
+
+        // add small primes >= startAt to result
+        for (int p : smallPrimes) {
+            if (p >= startAt) {
+                allPrimes[count++] = p;
+            }
+        }
+
+        // small primes <= sqrt(limit) already handled, so skip
+        long segmentStart = Math.max(startAt, (long) sqrtLimit + 1);
+
+        while (segmentStart <= limit) {
+            // define the end of the current segment
+            long segEnd = Math.min(segmentStart + segmentSize - 1, limit);
+
+            // create BitSet for current segment
+            BitSet segment = new BitSet((int) (segEnd - segmentStart + 1));
+            // set all bits to true in the BitSet
+            segment.set(0, (int) (segEnd - segmentStart + 1));
+
+            // iterate through small prime numbers to mark their multiples as non-prime in a segment
+            for (int p : smallPrimes) {
+                // find first multiple of p in the segment
+                long startMultiple = Math.max((long) p * p, ((segmentStart + p - 1) / p) * p);
+
+                // mark all multiples of p in the segment as non-prime numbers
+                for (long j = startMultiple; j <= segEnd; j += p) {
+                    // clear the bit
+                    segment.clear((int) (j - segmentStart));
+                }
+            }
+
+            // count num of primes in segment
+            int segCount = segment.cardinality();
+
+            long[] primesInSegment = new long[segCount];
+            int k = 0;
+            // loop through and set primes
+            for (int i = segment.nextSetBit(0); i >= 0; i = segment.nextSetBit(i + 1)) {
+                primesInSegment[k++] = segmentStart + i;
+            }
+
+            System.arraycopy(primesInSegment, 0, allPrimes, count, primesInSegment.length);
+            count += primesInSegment.length;
+            segmentStart += segmentSize;
+        }
+        return Arrays.copyOf(allPrimes, count);
     }
 }

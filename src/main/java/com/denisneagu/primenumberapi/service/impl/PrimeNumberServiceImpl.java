@@ -3,11 +3,13 @@ package com.denisneagu.primenumberapi.service.impl;
 import com.denisneagu.primenumberapi.dto.PrimeNumberExecutionResponse;
 import com.denisneagu.primenumberapi.dto.PrimeNumberResponse;
 import com.denisneagu.primenumberapi.enums.Algorithm;
+import com.denisneagu.primenumberapi.exception.IllegalLimitStateToAlgorithmException;
 import com.denisneagu.primenumberapi.exception.UnknownAlgorithmException;
 import com.denisneagu.primenumberapi.service.AlgorithmService;
 import com.denisneagu.primenumberapi.service.CacheService;
 import com.denisneagu.primenumberapi.service.PrimeNumberService;
 import com.denisneagu.primenumberapi.util.Constant;
+import com.denisneagu.primenumberapi.util.ExecutorServiceProvider;
 import com.denisneagu.primenumberapi.util.PrimeNumberExecution;
 import com.denisneagu.primenumberapi.util.Util;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PrimeNumberServiceImpl implements PrimeNumberService {
     private final CacheService cacheService;
     private final AlgorithmService algorithmService;
+    private final ExecutorServiceProvider executorServiceProvider;
     private final long[] EMPTY_PRIMES_ARRAY = new long[0];
 
     private long[] getPrimeNumbersAtAlgorithm(long startAt, long limit, Algorithm algorithm) {
@@ -37,6 +40,13 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
                 return algorithmService.getPrimeNumbersUsingNaiveTrialDivisionOptimised(startAt, limit);
             case SIEVE_OF_ERATOSTHENES:
                 return algorithmService.getPrimeNumbersUsingSieveOfEratosthenes(startAt, limit);
+            case CONCURRENT_SEGMENTED_SIEVE:
+                return algorithmService.getPrimeNumbersUsingConcurrentSegmentedSieve(
+                        executorServiceProvider.getExecutorService(),
+                        startAt,
+                        limit);
+            case SEGMENTED_SIEVE_BITSET:
+                return algorithmService.getPrimeNumbersUsingSegmentedSieveBitset(startAt, limit);
             default:
                 throw new UnknownAlgorithmException(Constant.UNKNOWN_ALGORITHM);
         }
@@ -45,6 +55,14 @@ public class PrimeNumberServiceImpl implements PrimeNumberService {
     private PrimeNumberExecutionResponse<long[]> computePrimeNumbers(long startAt, long limit, Algorithm algorithm) {
         return PrimeNumberExecution.getPrimeNumberWithExecutionTime(
                 () -> getPrimeNumbersAtAlgorithm(startAt, limit, algorithm));
+    }
+
+    // we only want to allow sieve of eratosthenes usage up to Integer max limit - 1
+    private void checkInputSize(long limit, Algorithm algorithm) {
+        if ((algorithm == Algorithm.SIEVE_OF_ERATOSTHENES) && (limit >= Integer.MAX_VALUE)) {
+            throw new IllegalLimitStateToAlgorithmException(String.format(
+                    Constant.ILLEGAL_LIMIT_STATE_TO_ALGORITHM_MESSAGE, algorithm));
+        }
     }
 
     @Override
