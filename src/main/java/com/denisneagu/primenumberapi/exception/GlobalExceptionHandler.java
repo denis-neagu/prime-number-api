@@ -79,6 +79,13 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), message);
     }
 
+    @ExceptionHandler(IllegalLimitStateToAlgorithmException.class)
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponse handleIllegalLimitStateToAlgorithmException(IllegalLimitStateToAlgorithmException ex) {
+        log.error("Illegal limit state to algorithm exception thrown: {}", ex.getMessage());
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), ex.getMessage());
+    }
+
     @ExceptionHandler(NoResourceFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorResponse handleNoResourceFoundException(NoResourceFoundException ex) {
