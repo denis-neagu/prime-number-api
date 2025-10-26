@@ -1,7 +1,9 @@
 ### Prime Number API
+___
 Calculate prime numbers up to and including a limit using diverse algorithms. 
 Choose your response layout and calculation strategy using query parameters.
 ### Project Set-up
+___
 **Note**: We'll need [JDK 17](https://www.oracle.com/java/technologies/javase/jdk17-0-13-later-archive-downloads.html)
 and [Maven](https://maven.apache.org/download.cgi) installed.
 ```text
@@ -11,6 +13,7 @@ and [Maven](https://maven.apache.org/download.cgi) installed.
 4. mvn spring-boot:run
 ```
 ### Tech Stack
+___
 - **Java Version**: 17
 - **Framework**: Spring Boot
 - **Testing**: JUnit, Mockito, REST-Assured
@@ -20,6 +23,7 @@ and [Maven](https://maven.apache.org/download.cgi) installed.
 - **Deployment**: AWS, EC2, Virtual Private Cloud (VPC)
 - **Continuous Integration**: GitHub Workflows 
 ### Deployment
+___
 **Note:** No-configuration, easy-deployment platforms such as Heroku or Render provide HTTP(S) out the box. AWS EC2 does not enable HTTP(S) out of the box. 
 To enable it we could use a reverse proxy like Nginx in the EC2 instance, but we'd need a certificate from a Certificate Authority (CA).
 We could use a self-signed certificate, but we'd still receive a warning message. 
@@ -29,10 +33,11 @@ Alternatively we could also use a modern Load Balancer such as AWS Application L
 Otherwise, by default HTTP uses port 80, so it won't be making the request to the correct resource.
 
 **Note:** The EC2 instance only provides 1GB of RAM and 1vCPU, therefore the number of primes we can calculate is limited to a small number around 100 million. 
-We could use more vertical scaling using more RAM and CPU Cores to support higher calculations.
+We could use more vertical scaling using more RAM and CPU Cores to support larger computations.
 
 URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/primes
 ### Features
+___
 - Diverse algorithms: Trial Division, Optimised Trial Division, Sieve of Eratosthenes, Segmented Sieve, Bitset Segmented Sieve
 - Caching
 - Cache merges
@@ -44,6 +49,7 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
 - Test coverage 
 
 ### Observations
+___
 1. JSON is more memory-efficient than XML, allowing more prime numbers to be displayed.
    Using cURL further increases this limit because it streams data in chunks to standard output, avoiding the browser’s
    memory constraints and enabling serialization of much larger datasets.  
@@ -68,6 +74,7 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
    for billions of prime number without optimisations around streaming data chunks, threshold caching, and memory-efficient data structures.
 
 ### API Endpoint
+___
 ##### `HTTP GET /api/v1/primes`
 ##### Query Parameters
 | Parameter Name | Type               | Description                                                                                                                                                                                                      | Constraints                             | Default Value              |
@@ -122,4 +129,5 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
 }
 ```
 ### Testing Coverage Report - JaCoCo
+___
 ![img.png](testing-coverage-report.png)
