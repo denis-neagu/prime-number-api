@@ -11,14 +11,14 @@ and [Maven](https://maven.apache.org/download.cgi) installed.
 4. mvn spring-boot:run
 ```
 ### Tech Stack
-- Java Version: 17
-- Framework: Spring Boot
-- Testing: JUnit, Mockito, REST-Assured
-- Build & Dependency: Maven
-- Annotation Processing and Productivity: Lombok
-- Serialisation/Deserialisation: Jackson
-- Deployment: AWS, EC2, Virtual Private Cloud (VPC)
-- Continuous Integration: GitHub Workflows 
+- **Java Version**: 17
+- **Framework**: Spring Boot
+- **Testing**: JUnit, Mockito, REST-Assured
+- **Build & Dependency Management**: Maven
+- **Annotation Processing and Productivity**: Lombok
+- **Serialisation/Deserialisation**: Jackson
+- **Deployment**: AWS, EC2, Virtual Private Cloud (VPC)
+- **Continuous Integration**: GitHub Workflows 
 ### Deployment
 **Note:** No-configuration, easy-deployment platforms such as Heroku or Render provide HTTP(S) out the box. AWS EC2 does not enable HTTP(S) out of the box. 
 To enable it we could use a reverse proxy like Nginx in the EC2 instance, but we'd need a certificate from a Certificate Authority (CA).
@@ -27,6 +27,9 @@ Alternatively we could also use a modern Load Balancer such as AWS Application L
 
 **Note:** I have mapped the app to port 8080 in the EC2 instance, and you need to explicitly define the port in the URL before making a request. 
 Otherwise, by default HTTP uses port 80, so it won't be making the request to the correct resource.
+
+**Note:** Our EC2 instance only provides 1GB of RAM and 1vCPU, therefore the number of primes we can calculate is limited to a small number around 100 million. 
+We could use more vertical scaling using more RAM and CPU Cores to support higher calculations.
 
 URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/primes
 ### Features
