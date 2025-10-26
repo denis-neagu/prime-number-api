@@ -20,7 +20,15 @@ and [Maven](https://maven.apache.org/download.cgi) installed.
 - Deployment: AWS, EC2, Virtual Private Cloud (VPC)
 - Continuous Integration: GitHub Workflows 
 ### Deployment
-// ToDo
+**Note:** No-configuration, easy-deployment platforms such as Heroku or Render provide HTTP(S) out the box. AWS EC2 does not enable HTTP(S) out of the box. 
+To enable it we could use a reverse proxy like Nginx in the EC2 instance, but we'd need a certificate from a Certificate Authority (CA).
+We could use a self-signed certificate, but we'd still receive a warning message. 
+Alternatively we could also use a modern Load Balancer such as AWS Application Load Balancer (ALB) and use AWS' Certificate Manager (ACM).<br>
+
+**Note:** I have mapped the app to port 8080 in the EC2 instance, and you need to explicitly define the port in the URL before making a request. 
+Otherwise, by default HTTP uses port 80, so it won't be making the request to the correct resource.
+
+URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/primes
 ### Features
 - Diverse algorithms: Trial Division, Optimised Trial Division, Sieve of Eratosthenes, Segmented Sieve, Bitset Segmented Sieve
 - Caching
