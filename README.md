@@ -52,12 +52,12 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
 | `showPrimes`   | `boolean`          | Indicates whether to include prime numbers in the response. If `false` then returns empty array.                                                                                                                 | None.                                   | `false`                    |
 | `algorithm`    | `Algorithm` (Enum) | Specifies the algorithm to use for processing. Expected values include:`NAIVE_TRIAL_DIVISION`, `NAIVE_TRIAL_DIVISION_OPTIMISED`, `SIEVE_OF_ERATOSTHENES`, `CONCURRENT_SEGMENTED_SIEVE`, `SEGMENTED_SIEVE_BITSET` | Must be a valid `Algorithm` enum value. | `NAIVE_TRIAL_DIVISION`     |
 | `cache`        | `boolean`          | Determines whether to use caching for the operation to improve performance.                                                                                                                                      | None.                                   | `false`                    |
-##### Example 1
+##### Example 1 - Valid Request with JSON response
 ###### Request
 `HTTP GET /api/v1/primes?limit=50`<br>
 `-H accept: application/json` 
 
-###### Response - JSON
+###### Response
 ```json
 {
   "algorithm": "NAIVE_TRIAL_DIVISION",
@@ -69,11 +69,11 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
   "primes": []
 }
 ```
-##### Example 2 
+##### Example 2 - Valid Request with XML response
 ###### Request
 `HTTP GET /api/v1/primes?limit=50`<br>
 `-H accept: application/xml` 
-###### Response - XML
+###### Response 
 ```xml
 <PrimeNumberResponse>
     <algorithm>NAIVE_TRIAL_DIVISION</algorithm>
@@ -84,4 +84,16 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
     <numOfPrimes>15</numOfPrimes>
     <primes/>
 </PrimeNumberResponse>
+```
+##### Example 3 - Invalid Request (missing limit query parameter) with JSON response
+###### Request
+`HTTP GET /api/v1/primes`<br>
+`-H accept: application/xml`
+###### Response 
+```json
+{
+    "httpStatus": 400,
+    "description": "Required request parameter 'limit' of type 'long' is missing",
+    "errorThrownAt": "2025-10-26T15:47:45.433075"
+}
 ```
