@@ -52,5 +52,36 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
 | `showPrimes`   | `boolean`          | Indicates whether to include prime numbers in the response. If `false` then returns empty array.                                                                                                                 | None.                                   | `false`                    |
 | `algorithm`    | `Algorithm` (Enum) | Specifies the algorithm to use for processing. Expected values include:`NAIVE_TRIAL_DIVISION`, `NAIVE_TRIAL_DIVISION_OPTIMISED`, `SIEVE_OF_ERATOSTHENES`, `CONCURRENT_SEGMENTED_SIEVE`, `SEGMENTED_SIEVE_BITSET` | Must be a valid `Algorithm` enum value. | `NAIVE_TRIAL_DIVISION`     |
 | `cache`        | `boolean`          | Determines whether to use caching for the operation to improve performance.                                                                                                                                      | None.                                   | `false`                    |
-##### Response
+##### Example 1
+###### Request
+`HTTP GET /api/v1/primes?limit=50`<br>
+`-H accept: application/json` 
 
+###### Response - JSON
+```json
+{
+  "algorithm": "NAIVE_TRIAL_DIVISION",
+  "cache": false,
+  "execTimeInNs": 44615,
+  "execTimeInMs": 0,
+  "timestamp": "2025-10-26T15:40:35.550205426",
+  "numOfPrimes": 15,
+  "primes": []
+}
+```
+##### Example 2 
+###### Request
+`HTTP GET /api/v1/primes?limit=50`<br>
+`-H accept: application/xml` 
+###### Response - XML
+```xml
+<PrimeNumberResponse>
+    <algorithm>NAIVE_TRIAL_DIVISION</algorithm>
+    <cache>false</cache>
+    <execTimeInNs>44615</execTimeInNs>
+    <execTimeInMs>0</execTimeInMs>
+    <timestamp>2025-10-26T15:40:35.550205426</timestamp>
+    <numOfPrimes>15</numOfPrimes>
+    <primes/>
+</PrimeNumberResponse>
+```
