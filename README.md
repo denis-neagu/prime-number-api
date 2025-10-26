@@ -55,7 +55,8 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
    great tool for speeding up performance on calculations that aren't yet cached. However, this has to be safely managed
    by setting a cache threshold relative to the total available memory to avoid memory consumptions growing indefinitely which would
    crash our application and be an inefficient way to implement caching. In addition to a threshold, I've implemented a cache reset, so when the threshold is reached we clear our cache to ensure
-   a risk-free environment and running out of memory.  
+   a risk-free environment and avoid running out of memory. Furthermore, Spring Boot caching provides an easier approach to caching due to out the box implementation for time-to-live and evicting,
+   and although my manual cache implementation was more complicated, in the end it was more performant than Spring Boot's caching.  
    <br>
 4. The best algorithm for the job depends on multiple constraints such as: input size, available threads, and memory.
    For example, a Concurrent Segmented Sieve is highly-performant for large input sizes, but uses a lot of memory due Multithreading
