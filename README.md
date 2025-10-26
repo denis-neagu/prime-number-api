@@ -97,3 +97,5 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
     "errorThrownAt": "2025-10-26T15:47:45.433075"
 }
 ```
+### Testing Coverage Report - JaCoCo
+![img.png](testing-coverage-report.png)
