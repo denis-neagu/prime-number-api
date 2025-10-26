@@ -28,7 +28,7 @@ Alternatively we could also use a modern Load Balancer such as AWS Application L
 **Note:** I have mapped the app to port 8080 in the EC2 instance, and you need to explicitly define the port in the URL before making a request. 
 Otherwise, by default HTTP uses port 80, so it won't be making the request to the correct resource.
 
-**Note:** Our EC2 instance only provides 1GB of RAM and 1vCPU, therefore the number of primes we can calculate is limited to a small number around 100 million. 
+**Note:** The EC2 instance only provides 1GB of RAM and 1vCPU, therefore the number of primes we can calculate is limited to a small number around 100 million. 
 We could use more vertical scaling using more RAM and CPU Cores to support higher calculations.
 
 URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/primes
@@ -42,3 +42,15 @@ URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/prime
 - JSON and XML support
 - Swagger documentation
 - Test coverage 
+
+### API Endpoint
+##### `HTTP GET /api/v1/primes`
+##### Query Parameters
+| Parameter Name | Type               | Description                                                                                                                                                                                                      | Constraints                             | Default Value              |
+|----------------|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|----------------------------|
+| `limit`        | `long`             | Specifies the upper bound for the range of numbers to process.                                                                                                                                                   | Must be at least 2 (`@Min(2)`).         | None (required parameter). |
+| `showPrimes`   | `boolean`          | Indicates whether to include prime numbers in the response. If `false` then returns empty array.                                                                                                                 | None.                                   | `false`                    |
+| `algorithm`    | `Algorithm` (Enum) | Specifies the algorithm to use for processing. Expected values include:`NAIVE_TRIAL_DIVISION`, `NAIVE_TRIAL_DIVISION_OPTIMISED`, `SIEVE_OF_ERATOSTHENES`, `CONCURRENT_SEGMENTED_SIEVE`, `SEGMENTED_SIEVE_BITSET` | Must be a valid `Algorithm` enum value. | `NAIVE_TRIAL_DIVISION`     |
+| `cache`        | `boolean`          | Determines whether to use caching for the operation to improve performance.                                                                                                                                      | None.                                   | `false`                    |
+##### Response
+
