@@ -38,7 +38,7 @@ We could use more vertical scaling using more RAM and CPU Cores to support large
 URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/primes
 ### Features
 ___
-- Diverse algorithms: Trial Division, Optimised Trial Division, Sieve of Eratosthenes, Segmented Sieve, Bitset Segmented Sieve
+- Diverse algorithms: Trial Division, Optimised Trial Division, Sieve of Eratosthenes, Concurrent Segmented Sieve, Bitset Segmented Sieve
 - Caching
 - Cache merges
 - REST API
