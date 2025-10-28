@@ -35,7 +35,9 @@ Otherwise, by default HTTP uses port 80, so it won't be making the request to th
 **Note:** The EC2 instance only provides 1GB of RAM and 1vCPU, therefore the number of primes we can calculate is limited to a small number around 100 million. 
 We could use more vertical scaling using more RAM and CPU Cores to support larger computations.
 
-URL: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/primes
+URL with limit set to 100: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/primes?limit=100  
+URL with Swagger endpoint: http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/swagger-ui/index.html  
+URL with no limit (should see an error for missing limit query parameter): http://ec2-18-132-106-253.eu-west-2.compute.amazonaws.com:8080/api/v1/primes
 ### Features
 ___
 - Diverse algorithms: Trial Division, Optimised Trial Division, Sieve of Eratosthenes, Concurrent Segmented Sieve, Bitset Segmented Sieve
